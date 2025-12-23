@@ -1,0 +1,131 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -160,
+        48
+      ],
+      "id": "700b8fdf-8033-4bf7-9bee-5494b9d8561d",
+      "name": "When chat message received",
+      "webhookId": "881d4c41-5143-4ada-a80f-676cde9b092e"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful assistant"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        48,
+        48
+      ],
+      "id": "67a09312-092d-4a20-8158-c204f35dc4d2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.0-flash-001",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        320
+      ],
+      "id": "14904d16-00f8-4813-88f1-a3bd1fd592c6",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "MHZ9e9N0SgHwmnjc",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('message0_Text', ``, 'string') }}"
+            },
+            {}
+          ]
+        },
+        "options": {
+          "searchRecency": "month"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexityTool",
+      "typeVersion": 1,
+      "position": [
+        288,
+        320
+      ],
+      "id": "a3b71f97-c7f4-4056-aa89-84f7821268ee",
+      "name": "Message a model in Perplexity",
+      "credentials": {
+        "perplexityApi": {
+          "id": "iTTSOCPaX2iTPGJ6",
+          "name": "Perplexity account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model in Perplexity": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d5c76c6a-1ad5-4232-b559-c5d477419afa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e18017f0b3bb790e0f35024111003dec7233f1fd51e3fa959eaa653cdc60e1e9"
+  },
+  "id": "wGD6jJlqYwNhlA30",
+  "tags": []
+}
