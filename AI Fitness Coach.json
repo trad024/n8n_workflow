@@ -1,0 +1,217 @@
+{
+  "name": "AI Fitness Coach",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7e65b331-b815-41b8-8d28-01267237f891",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        -792,
+        504
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "es2ew4WEFiImELqx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "moetaztrad@gmail.com",
+        "subject": "=Your Fitness Trainer's Feedback for your Recent Run - {{ $now.toLocal().format('MMM dd, yyyy') }}",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a7b68e1d-bda8-4054-a536-d5d9bab24b1e",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        -64,
+        288
+      ],
+      "webhookId": "70ab1218-b5a1-47e7-9e9e-89c5c4f84c15",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "1c6SahUoqF9dWfVo",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Recursive function to flatten JSON into a single string\nfunction flattenJson(obj, prefix = '') {\n let str = '';\n for (const key in obj) {\n if (typeof obj[key] === 'object' && obj[key] !== null) {\n str += flattenJson(obj[key], `${prefix}${key}.`);\n } else {\n str += `${prefix}${key}: ${obj[key]}\\n`;\n }\n }\n return str;\n}\n\n// Get input data\nconst data = $input.all();\n\n// Initialize a variable to store the final output\nlet output = '';\n\n// Process each item\ndata.forEach(item => {\n output += flattenJson(item.json);\n output += '\\n---\\n'; // Separator between records\n});\n\n// Return the merged string as output\nreturn [{ json: { data: output } }];\n"
+      },
+      "id": "375c9a5c-850b-4ef0-bc50-15d3530a0ed4",
+      "name": "Combine Everything",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -1088,
+        280
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "agent": "conversationalAgent",
+        "promptType": "define",
+        "text": "=You are a Running & Walking Coach specializing in analyzing Strava activity data to help athletes improve performance, endurance, and consistency. Your responses must be motivational, data-driven, and tailored to the user’s fitness level, goals, and recent activity trends.\n\n## Key Abilities\n\n### 1. Analyze Activity Data\nEvaluate running/walking metrics such as:\n- Distance\n- Pace\n- Duration\n- Heart rate\n- Cadence\n- Elevation\n- Time of day\n- Route type (trail, road, treadmill)\n\nIdentify trends, strengths, and areas that need improvement.\n\n### 2. Provide Feedback\nBreak down activities and explain performance factors such as:\n- Pacing consistency\n- Effort levels vs. heart rate\n- Cadence efficiency\n- Stride-related insights\n- How terrain or conditions affected performance\n- Whether duration/pace align with goals\n\nHighlight wins, progress, and opportunities for growth.\n\n### 3. Create Improvement Plans\nOffer actionable recommendations:\n- Workouts to improve endurance, speed, or aerobic base\n- Cadence/stride optimization tips\n- Recovery strategies\n- Weekly training structure based on experience level\n- Suggestions based on terrain or weather\n- Advice to avoid injury or burnout\n\n### 4. Set Goals & Challenges\nHelp users create:\n- Realistic short-term goals (e.g., improve 5K pace, increase weekly mileage)\n- Long-term targets (e.g., run 10K, half marathon, or maintain consistent daily walking)\n- Weekly or monthly challenges to boost motivation\n\n### 5. Motivational Coaching\n- Stay positive, encouraging, and supportive\n- Celebrate milestones\n- Keep the user consistent\n- Frame feedback in an empowering way\n\n### 6. Data Formatting & Analysis\nWhen analyzing data:\n- Convert seconds into readable duration formats\n- Analyze pace and time clearly\n- Consider the time of day the user ran/walked\n- Notice trends across multiple activities\n- Make observations easy to understand\n\n## Capabilities as a Running & Walking Coach\n\n### Activity Categorization\nIdentify whether the activity is:\n- Run (easy run, tempo, intervals, long run, race)\n- Walk (endurance walk, recovery walk, casual walk)\n\nAdapt feedback based on:\n- Terrain (road, trail, track, treadmill)\n- Weather (heat, rain, humidity)\n- Elevation changes\n\n### Activity-Specific Analysis\n\n#### Running\nFocus on:\n- Distance & pace\n- Pace consistency\n- Cadence\n- Heart rate zones\n- Stride efficiency indicators\n- Elevation and route difficulty\n\nProvide:\n- Advice for improving running economy\n- Warm-up and cool-down recommendations\n- Suggested workouts like intervals, tempo runs, progression runs, and long runs\n\n#### Walking\nFocus on:\n- Distance & duration\n- Pace trends\n- Heart rate response\n- Elevation and terrain difficulty\n- Daily consistency and steps\n\nProvide:\n- Tips for increasing endurance\n- Strategies for improving walking pace safely\n- Suggestions for maintaining consistent activity\n\n## Expectations\n- Personalized Responses: Always consider user history, goals, and fitness level.\n- Data-Driven: Provide clear explanations backed by activity data.\n- Actionable Advice: Give specific workouts, pacing recommendations, or adjustments.\n- Motivational Tone: Encourage progress and celebrate wins.\n\n## Context Awareness\nYou have access to:\n- Strava activity data (JSON or tabular)\n- User goals and background\n- Distance, pace, elevation, heart rate\n- Historical performance trends\n\n## Example Prompts\n- “Here are my recent runs. How do I improve my pace?”\n- “Analyze this walk. Am I improving week by week?”\n- “Here’s my long run from today. What should I focus on next?”\n\n## Goal\nHelp the athlete reach their potential by giving precise, actionable, motivational coaching, and a customized plan for improving running or walking performance.\n\nHere is the Activity Data:\n{{ $json.data }}\n",
+        "options": {}
+      },
+      "id": "5b92104f-a294-4d88-8ea1-8756faf68394",
+      "name": "Fitness Coach",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -864,
+        280
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "jsCode": "// Input JSON from the previous node\nconst input = $json.output;\n\n// Split the input into sections based on double newlines\nconst sections = input.split('\\n\\n');\n\n// Initialize the result array\nconst result = [];\n\n// Process each section\nsections.forEach((section) => {\n const trimmedSection = section.trim();\n\n // Handle headings marked with ** (bold)\n if (/^\\*\\*(.*?)\\*\\*$/.test(trimmedSection)) {\n result.push({ type: 'heading', content: trimmedSection.replace(/\\*\\*(.*?)\\*\\*/, '<b>$1</b>') });\n }\n // Handle bullet lists marked with *\n else if (trimmedSection.startsWith('*')) {\n const listItems = trimmedSection.split('\\n').map((item) => item.trim().replace(/^\\*\\s/, ''));\n result.push({ type: 'list', items: listItems });\n }\n // Handle numbered lists\n else if (/^\\d+\\.\\s/.test(trimmedSection)) {\n const numberedItems = trimmedSection.split('\\n').map((item) => item.trim().replace(/^\\d+\\.\\s/, ''));\n result.push({ type: 'numbered-list', items: numberedItems });\n }\n // Handle paragraphs\n else {\n result.push({ type: 'paragraph', content: trimmedSection });\n }\n});\n\n// Return the result array\nreturn result.map(item => ({ json: item }));\n"
+      },
+      "id": "4939a7e3-12eb-49ed-86cd-1886ddb2c4f9",
+      "name": "Structure Output",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -512,
+        288
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get input data from n8n\nconst inputData = $input.all(); // Fetch all input data items\n\n// Function to convert JSON data into a single HTML string\nfunction convertToHTML(data) {\n let html = '';\n\n data.forEach((item) => {\n switch (item.json.type) {\n case 'paragraph':\n html += `<p>${item.json.content}</p>`;\n break;\n case 'heading':\n html += `<h2>${item.json.content}</h2>`;\n break;\n case 'list':\n html += '<ul>';\n item.json.items.forEach((listItem) => {\n html += `<li>${listItem}</li>`;\n });\n html += '</ul>';\n break;\n case 'numbered-list':\n html += '<ol>';\n item.json.items.forEach((listItem) => {\n html += `<li>${listItem}</li>`;\n });\n html += '</ol>';\n break;\n default:\n break;\n }\n });\n\n return html;\n}\n\n// Convert inputData to a single HTML string\nconst singleHTML = convertToHTML(inputData);\n\n// Return as a single item\nreturn [{ json: { html: singleHTML } }];\n"
+      },
+      "id": "0b66f84c-0ca6-44f1-817d-7130a78539d2",
+      "name": "Conver to HTML",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -288,
+        288
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "id": "441db5ff-d805-4485-88c3-3956f2cc1c1f",
+      "name": "Code",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        -1312,
+        280
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "activityId": "16812350664"
+      },
+      "type": "n8n-nodes-base.strava",
+      "typeVersion": 1.1,
+      "position": [
+        -1520,
+        272
+      ],
+      "id": "b146643a-f799-40ec-a9d6-6a24ace712c5",
+      "name": "Get an activity",
+      "credentials": {
+        "stravaOAuth2Api": {
+          "id": "t9QssUkrv8Q9IhfW",
+          "name": "Strava account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Combine Everything",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fitness Coach": {
+      "main": [
+        [
+          {
+            "node": "Structure Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conver to HTML": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structure Output": {
+      "main": [
+        [
+          {
+            "node": "Conver to HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Everything": {
+      "main": [
+        [
+          {
+            "node": "Fitness Coach",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Fitness Coach",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d9230965-8cce-4fcd-b318-d9eb268af4a6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e18017f0b3bb790e0f35024111003dec7233f1fd51e3fa959eaa653cdc60e1e9"
+  },
+  "id": "3Mvo2KJa50OtVZXz",
+  "tags": []
+}
